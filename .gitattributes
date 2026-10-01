@@ -1,0 +1,10 @@
+# Normalize line endings to LF so gofmt is happy on every OS.
+*.go text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.example text eol=lf
+*.gitignore text eol=lf
+*.ico binary

@@ -36,8 +36,8 @@ var appIcon []byte
 
 const (
 	clientID          = "1511758462089035988" // built-in Discord app (public ID, not a secret)
-	appVersion        = "1.0.0"               // bump per release; compared against GitHub tag (sans "v")
-	defaultUpdateRepo = "MacroMaster101/Stremio_Discord_Rich_Presence"
+	appVersion        = "1.0.1"               // bump per release; compared against GitHub tag (sans "v")
+	defaultUpdateRepo = "jasserhouimli/stremio-discord-presence-go"
 	defaultPollMs     = 5000
 	defaultActiveMs   = 2500
 	defaultPauseAfter = 0                 // 0 = off: never guess Paused (see shouldMarkPaused)

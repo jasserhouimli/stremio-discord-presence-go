@@ -47,7 +47,7 @@ jobs:
 
       - name: Build exe
         if: steps.version.outputs.exists == 'false'
-        run: go build -trimpath -o stremio-discord-presence.exe .
+        run: go build -trimpath -ldflags="-s -w" -o stremio-discord-presence.exe .
 
       - name: Create tag and release
         if: steps.version.outputs.exists == 'false'

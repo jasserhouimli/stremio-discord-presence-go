@@ -3,7 +3,7 @@
 Lightweight Windows tray companion that shows your Stremio status on Discord
 Rich Presence. A minimal Go rewrite of the
 [Electron original](https://github.com/MacroMaster101/Stremio_Discord_Rich_Presence)
-— same core behavior, ~10 MB single `.exe` instead of ~200 MB.
+— same core behavior, ~7 MB single `.exe` instead of a ~100 MB installer.
 
 ## What it does (core only)
 

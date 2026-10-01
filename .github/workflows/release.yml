@@ -1,0 +1,66 @@
+name: Auto tag & release
+
+# Push to main with a bumped `appVersion` (in main.go) and this workflow
+# tags v<version>, builds the Windows exe, and publishes a GitHub Release
+# with the exe attached — which is what the in-app updater installs.
+# Pushes where the tag already exists (docs-only, etc.) are a no-op.
+# You can also trigger it manually from the Actions tab.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+          cache: true
+
+      - name: Vet and test
+        run: |
+          go vet ./...
+          go test ./...
+
+      - name: Read version and check tag
+        id: version
+        shell: bash
+        run: |
+          VER=$(grep -oP 'appVersion\s*=\s*"\K[^"]+' main.go)
+          if [ -z "$VER" ]; then echo "could not read appVersion"; exit 1; fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          if git rev-parse "v$VER" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build exe
+        if: steps.version.outputs.exists == 'false'
+        run: go build -trimpath -o stremio-discord-presence.exe .
+
+      - name: Create tag and release
+        if: steps.version.outputs.exists == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VER: ${{ steps.version.outputs.version }}
+        run: |
+          sha256sum stremio-discord-presence.exe > stremio-discord-presence.exe.sha256
+          git tag "v$VER"
+          git push origin "v$VER"
+          gh release create "v$VER" \
+            --title "v$VER" \
+            --generate-notes \
+            stremio-discord-presence.exe \
+            stremio-discord-presence.exe.sha256
